@@ -1,0 +1,49 @@
+name: HadouCAN_util CI
+
+on:
+  create:
+    tags:
+      - '**'
+  push:
+    branches: 
+      - '**'
+  pull_request:
+    branches: 
+      - '**'
+
+env:
+  DOCKER_REPO: docker.pkg.github.com/suburbanembedded/hadoucan_util/hadoucan_util_tools
+
+jobs:
+  build:
+
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: clone
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: login to docker.pkg.github.com
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: fetch container master
+        run: docker pull $DOCKER_REPO:master || true
+
+      - name: fetch container for branch
+        run: docker pull $DOCKER_REPO:${GITHUB_REF##*/} || true
+
+      - name: build container
+        run: docker build --cache-from $DOCKER_REPO:master --cache-from $DOCKER_REPO:${GITHUB_REF##*/} continuous_integration/build --file continuous_integration/build/Dockerfile --tag hadoucan_util_tools
+
+      - name: tag container
+        run: docker tag hadoucan_util_tools $DOCKER_REPO:${GITHUB_REF##*/}
+
+      - name: push container
+        run: docker push $DOCKER_REPO:${GITHUB_REF##*/}
+
+      - name: build
+        run: ./scripts/build_ci.sh
