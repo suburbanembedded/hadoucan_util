@@ -18,7 +18,7 @@
 #include <sstream>
 
 
-bool Gen_can::decimal_to_hex(size_t hex_length, unsigned int value, std::string* const can_str)
+bool Gen_can::decimal_to_hex(int hex_length, unsigned int value, std::string* const can_str)
 {
     char temp[10];
     int ret = snprintf(temp, 10, "%0.*X", hex_length, value);
@@ -35,7 +35,7 @@ bool Gen_can::gen_rand_can(std::string* const can_str)
 {
 	can_str->clear();
 	bool FD_frame = false;
-	size_t id_length = 0;
+	int id_length = 0;
 	size_t dlc_max = 0;
 	unsigned int rand_num = rand_type(rng);
 
