@@ -18,7 +18,7 @@ class Gen_can
 	public:
 		Gen_can() : rand_type(0, 3), rand_std(0,2047), rand_ext(0,536870911), rand_data(0,255), rng(7985) {}
 		bool gen_rand_can(std::string* const can_str);
-		bool decimal_to_hex(size_t hex_length, unsigned int value, std::string* const can_str);
+		bool decimal_to_hex(int hex_length, unsigned int value, std::string* const can_str);
 
 		std::mt19937 rng;
 		std::uniform_int_distribution<int> rand_type;
